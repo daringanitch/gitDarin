@@ -1,15 +1,20 @@
+#!/bin/bash
 #######################################################
 # installs metadata helper tool
 ######################################################
-#!/bin/bash
 var=bye,bye
-echo " installing metadata helper tool"
+file="/usr/bin/ec2.metadata"
 
-wget http://s3.amazonaws.com/ec2metadata/ec2-metadata
-chmod u+x ec2-metadata.1
-mv ec2-metadata.1 /usr/bin/
+if [ -f $file ]; then
+        echo "file is there"
+else
+        echo "file in not there, installing file"
+        wget http://s3.amazonaws.com/ec2metadata/ec2-metadata
+        chmod u+x ec2-metadata
+        mv ec2-metadata /usr/bin/
+fi        
 #####################################################
-Menu to get metadata
+# Menu to get metadata
 #####################################################
   clear
   echo  "--------------------------------" 
