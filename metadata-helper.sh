@@ -3,7 +3,7 @@
 # installs metadata helper tool
 ######################################################
 var=bye,bye
-file="/usr/bin/ec2.metadata"
+file="/usr/bin/ec2-metadata"
 
 if [ -f $file ]; then
         echo "file is there"
