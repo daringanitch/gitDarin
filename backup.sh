@@ -1,6 +1,6 @@
 ## Set as a cron job on linux box
-## AWS credentials and AWS CLI must be setup first
-## Modified by Darin J Ganitch
+## AWS role must be in place
+##  by Darin J Ganitch
 #!/bin/sh
 SHELLDIR=`dirname ${0}`
 SHELLDIR=`cd ${SHELLDIR}; pwd`
@@ -84,4 +84,3 @@ delete_old_snapshot
 print_msg "INF:$SHELLDIR/${SHELLNAME} END"
 
 exit 0
-
