@@ -1,0 +1,156 @@
+cat > scripts/pre_flight.sh <<EOF
+LOG=/var/tmp/scripts.log
+
+# remove old application properties
+if [ -f /etc/wildfly/wlas/application.properties ]; then
+    /bin/rm /etc/wildfly/wlas/application.properties 2>&1 >> \$LOG
+fi
+
+# make dir /etc/wildfly/wlas
+[ -f /etc/wildfly/wlas ] || mkdir -p /etc/wildfly/wlas 2>&1 >> \$LOG
+
+# append to configuration options for runtime
+if [ \`grep -c Dwlas.application.properties /opt/wildfly/bin/standalone.conf\` = 0 ];then
+   echo "Setting JAVA_OPTS"  >> \$LOG
+   echo "JAVA_OPTS=\"\$JAVA_OPTS -Djava.net.preferIPv4Stack=true -Dwlas.application.properties=/etc/wildfly/wlas/\"" >> /opt/wildfly/bin/standalone.conf
+fi
+
+# set /etc/hosts file after install
+MYIP="\`ip addr show dev eth0 |grep inet\  | tr -d \  |sed -e 's/[a-z]//g'|cut -d/ -f1\`"
+MYID="\` echo ip-\$MYIP | sed -e 's/\./-/g'\`"
+MYHOSTLINE=\`echo -e \$MYIP "\t" \$MYID "\t" "wlas localhost\n"\`
+
+export MYID
+
+cat << HOSTSFILE > /etc/hosts
+# /etc/hosts file created in install scripts
+127.0.0.1		localhost	localhost.localdomain
+::1		localhost6	localhost6.localdomain6
+HOSTSFILE
+
+echo \$MYHOSTLINE >> /etc/hosts
+
+EOF
+
+cat > scripts/start_server.sh <<EOF
+LOG=/var/tmp/scripts.log
+
+echo "Starting Wildfly Server" >> \$LOG
+/sbin/service wildfly start 2>&1 >> \$LOG
+
+echo "Waiting wildfly to launch on 9990..." >> \$LOG
+
+#while ! nc -z \$MYIP 9990 2>&1 >> $LOG ; do
+# echo "sleeping a bit more" >> $LOG
+# sleep 30 # wait for a few seconds before check again
+#done
+
+echo "Wildfly Management launched" >> \$LOG
+
+EOF
+
+
+cat > scripts/stop_server.sh <<EOF
+LOG=/var/tmp/scripts.log
+
+echo "Stopping Wildfly Server" >> \$LOG
+/sbin/service wildfly stop 2>&1 >> \$LOG
+
+EOF
+
+
+cat > scripts/deploy_war.sh <<EOF
+
+LOG=/var/tmp/scripts.log
+source /etc/profile.d/java.sh
+
+echo "Installing Application" >> \$LOG
+pwd 2>&1 >> \$LOG
+
+war="\`ls -lrt /opt/codedeploy-agent/deployment-root/*/*/deployment-archive/ROOT.war | tail -1|cut -d'/' -f2- \`"
+
+echo "War is this : /\${war}" >> \$LOG
+
+echo "Deploying war file /\${war}" >> \$LOG
+PATH=/opt/wildfly/bin:\$PATH
+
+cd \` echo /\${war} |sed -e 's/ROOT.war//'\`
+pwd 2>&1 >> \$LOG
+
+echo "jboss-cli.sh --connect \"deploy --force ROOT.war\"" >> \$LOG
+#jboss-cli.sh --connect "deploy --force ROOT.war" >> \$LOG
+
+while ! jboss-cli.sh --connect "deploy --force ROOT.war" >> \$LOG; do
+  echo "Waiting for /\${war} to deploy or bust" >> \$LOG
+ if ! [ -f ROOT.war ];then exit 1; fi
+  sleep 30
+done
+
+EOF
+
+
+cat > scripts/change_permissions.sh <<EOF
+
+chown -R wildfly:wildfly /etc/wildfly /opt/wildfly
+
+EOF
+
+
+cat > scripts/check-status.sh <<EOF
+
+
+LOG=/var/tmp/scripts.log
+# validate deployment hash for wildfly ( WLAS  / ROOT.war )
+deployed_root=\`grep Deploying /var/tmp/scripts.log |grep -v force |tail -1 | awk '{ print \$4 }'\`
+active_config=/opt/wildfly/standalone/configuration/standalone.xml
+war_hash=\`sha1sum /\${deployed_root} | awk '{ print \$1 }'\`
+found_line=\`grep \$war_hash \$active_config\`
+
+#if [[ \$? == 0 ]];  then
+#  echo "Validated hash : \$war_hash is active" >> $LOG
+#  echo \$found_line >> $LOG
+#else
+#  echo "Hash was not found to be active" >> $LOG
+#  exit 1
+#fi
+
+EOF
+
+
+chmod 755 scripts/*.sh
+
+
+cat > appspec.yml <<EOF
+version: 0.0
+os: linux
+hooks:
+  BeforeInstall:
+    - location: scripts/pre_flight.sh
+      timeout: 300
+      runas: root
+    - location: scripts/stop_server.sh
+      timeout: 300
+      runas: root
+    - location: scripts/start_server.sh
+      timeout: 300
+      runas: root
+    - location: scripts/deploy_war.sh
+      timeout: 300
+      runas: root
+  AfterInstall:
+    - location: scripts/change_permissions.sh
+      timeout: 30
+      runas: root
+  ApplicationStart:
+    - location: scripts/start_server.sh
+      timeout: 300
+      runas: root
+  ApplicationStop:
+    - location: scripts/stop_server.sh
+      timeout: 300
+      runas: root
+  ValidateService:
+    - location: scripts/check-status.sh
+      timeout: 300
+      runas: root
+EOF
