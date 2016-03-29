@@ -26,10 +26,10 @@ RET=$E_SUCCESS
 # Search the log file
 OUT=$(grep "$HR" $LOG | grep "$SEARCH")
 # Count how many hits we got
-COUNT=$(grep "$HR" $LOG | grep "$SEARCH" | wc -l)
+COUNT=$(grep "$HR" $LOG | grep "$SEARCH" | -c)
 
 # If we found something, WARN
-if [ $COUNT -gt 0 ]; then
+if [ "$COUNT" -gt 0 ]; then
         RET=$E_WARNING
 
         echo "Last 5 lines of errors, if available:"
