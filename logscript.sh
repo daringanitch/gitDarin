@@ -26,7 +26,7 @@ RET=$E_SUCCESS
 # Search the log file
 OUT=$(grep "$HR" $LOG | grep "$SEARCH")
 # Count how many hits we got
-COUNT=$(grep "$HR" $LOG | grep "$SEARCH" | -c)
+COUNT=$(grep "$HR" $LOG | grep -c "$SEARCH" )
 
 # If we found something, WARN
 if [ "$COUNT" -gt 0 ]; then
