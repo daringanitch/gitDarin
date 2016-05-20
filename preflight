@@ -1,0 +1,14 @@
+# set /etc/hosts file after install
+MYIP="`ip addr show dev eth0 |grep inet\  | tr -d \  |sed -e 's/[a-z]//g'|cut -d/ -f1`"
+MYID="` echo ip-$MYIP | sed -e 's/\./-/g'`"
+MYHOSTLINE=`echo -e $MYIP "\t" $MYID "\t" "wlas localhost\n"`
+
+export MYID
+
+cat << HOSTSFILE > /etc/hosts
+# /etc/hosts file created in install scripts
+127.0.0.1               localhost       localhost.localdomain
+::1             localhost6      localhost6.localdomain6
+HOSTSFILE
+
+echo $MYHOSTLINE >> /etc/hosts
