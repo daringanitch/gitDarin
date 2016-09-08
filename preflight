@@ -1,7 +1,7 @@
 # set /etc/hosts file after install
 MYIP="`ip addr show dev eth0 |grep inet\  | tr -d \  |sed -e 's/[a-z]//g'|cut -d/ -f1`"
 MYID="` echo ip-$MYIP | sed -e 's/\./-/g'`"
-MYHOSTLINE=`echo -e $MYIP "\t" $MYID "\t" "wlas localhost\n"`
+MYHOSTLINE=`echo -e $MYIP "\t" $MYID "\t" " localhost\n"`
 
 export MYID
 
