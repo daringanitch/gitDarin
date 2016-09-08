@@ -85,7 +85,7 @@ fi
          18) echo "Names of the security groups the instance is launched in Only available if supplied at instance launch time"
             ec2-metadata -s ;;
          19) echo "User supplied data.Only available if supplied at instance launch time"   
-            ec2metadata -d ;; 
+            ec2metadata --user-data;; 
          20) echo "Exiting..........................................."
                echo "$var";exit;;  
 esac
