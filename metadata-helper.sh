@@ -47,45 +47,45 @@ fi
   read  Choice
   case "$Choice" in
   	 0) echo "Show all metadata information for this host"
-  	    ec2-metadata.1 --all ;;
+  	    ec2-metadata --all ;;
   	 1) echo "The AMI ID used to launch this instance"
-  	    ec2-metadata.1 -a ;;
+  	    ec2-metadata -a ;;
   	 2) echo "The index of this instance in the reservation (per AMI)"
-  	    ec2-metadata.1 ;;
+  	    ec2-metadata ;;
   	 3) echo "The manifest path of the AMI with which the instance was launched"
-  	    ec2-metadata.1 -m ;;
+  	    ec2-metadata -m ;;
   	 4) echo "The AMI IDs of any instances that were rebundled to create this AMI"
-  	    ec2-metadata.1 -n ;;
+  	    ec2-metadata -n ;;
   	 5) echo "Defines native device names to use when exposing virtual devices"
-  	    ec2-metadata.1 -b ;;
+  	    ec2-metadata -b ;;
   	 6) echo "The ID of this instance"
-  	    ec2-metadata.1 -i ;;
+  	    ec2-metadata -i ;;
   	 7) echo "The type of instance to launch. For more information, see Instance Types"
-  	    ec2-metadata.1 -t ;;
+  	    ec2-metadata -t ;;
   	 8) echo "The local hostname of the instance"
-  	    ec2-metadata.1 -h ;;
+  	    ec2-metadata -h ;;
   	 9) echo "Public IP address if launched with direct addressing; private IP address if launched with public addressing"
-  	    ec2-metadata.1 -o  ;;
+  	    ec2-metadata -o  ;;
   	 10) echo "The ID of the kernel launched with this instance, if applicable" 
-  	    ec2-metadata.1 -k ;;
+  	    ec2-metadata -k ;;
   	 11) echo "The availability zone in which the instance launched. Same as placement"
-            ec2metadata.1 -z ;;
+            ec2metadata -z ;;
          12) echo  "Product codes associated with this instance"
-            ec2-metadata.1 -c ;;
+            ec2-metadata -c ;;
          13) echo "The public hostname of the instance"
-            ec2-metadata.1 -p ;;
+            ec2-metadata -p ;;
          14) echo "NATted public IP Address"
-            ec2-metadata.1 -v ;;
+            ec2-metadata -v ;;
          15) echo "Public keys Only available if supplied at instance launch time"
-            ec2-metadata.1 --u ;;
+            ec2-metadata --u ;;
          16) echo "The ID of the RAM disk launched with this instance, if applicable"
-            ec2-metadata.1 --r ;;
+            ec2-metadata --r ;;
          17) echo "ID of the reservation"
-            ec2-metadata.1 -e ;;
+            ec2-metadata -e ;;
          18) echo "Names of the security groups the instance is launched in Only available if supplied at instance launch time"
-            ec2-metadata.1 -s ;;
+            ec2-metadata -s ;;
          19) echo "User supplied data.Only available if supplied at instance launch time"   
-            ec2metadata.1 -d ;; 
+            ec2metadata -d ;; 
          20) echo "Exiting..........................................."
                echo "$var";exit;;  
 esac
