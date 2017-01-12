@@ -20,7 +20,7 @@ clear
               ;;
           2)
              echo " Syncing Files to AWS S3"
-                aws s3 sync /etc/media s3://djg-movies/media;;
+                aws s3 sync /etc/media s3://movies-movies/media;;
 
           3)
              echo "Exiting..........................................."
