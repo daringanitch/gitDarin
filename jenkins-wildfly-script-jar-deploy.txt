@@ -2,12 +2,12 @@ cat > scripts/pre_flight.sh <<EOF
 LOG=/var/tmp/scripts.log
 
 # remove old application properties
-if [ -f /etc/wildfly/wlas/application.properties ]; then
-    /bin/rm /etc/wildfly/wlas/application.properties 2>&1 >> \$LOG
+if [ -f /etc/wildfly/app/application.properties ]; then
+    /bin/rm /etc/wildfly/app/application.properties 2>&1 >> \$LOG
 fi
 
-# make dir /etc/wildfly/wlas
-[ -f /etc/wildfly/wlas ] || mkdir -p /etc/wildfly/wlas 2>&1 >> \$LOG
+# make dir /etc/wildfly/app
+[ -f /etc/wildfly/app ] || mkdir -p /etc/wildfly/wlas 2>&1 >> \$LOG
 
 # append to configuration options for runtime
 if [ \`grep -c Dwlas.application.properties /opt/wildfly/bin/standalone.conf\` = 0 ];then
