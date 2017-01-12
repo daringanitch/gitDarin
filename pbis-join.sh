@@ -4,5 +4,5 @@ sudo yum clean all
 sudo yum install pbis-open
 sleep 10
 sudo -s
-/opt/pbis/bin/domainjoin-cli join pnmac.com dganitch@pnmac.com
+/opt/pbis/bin/domainjoin-cli join domain.com dganitch@hotmail.com
 shutdown now -r
