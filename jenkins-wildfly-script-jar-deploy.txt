@@ -2,23 +2,23 @@ cat > scripts/pre_flight.sh <<EOF
 LOG=/var/tmp/scripts.log
 
 # remove old application properties
-if [ -f /etc/wildfly/wlas/application.properties ]; then
-    /bin/rm /etc/wildfly/wlas/application.properties 2>&1 >> \$LOG
+if [ -f /etc/wildfly/app/application.properties ]; then
+    /bin/rm /etc/wildfly/app/application.properties 2>&1 >> \$LOG
 fi
 
-# make dir /etc/wildfly/wlas
-[ -f /etc/wildfly/wlas ] || mkdir -p /etc/wildfly/wlas 2>&1 >> \$LOG
+# make dir /etc/wildfly/app
+[ -f /etc/wildfly/app ] || mkdir -p /etc/wildfly/app 2>&1 >> \$LOG
 
 # append to configuration options for runtime
-if [ \`grep -c Dwlas.application.properties /opt/wildfly/bin/standalone.conf\` = 0 ];then
+if [ \`grep -c Dapp.application.properties /opt/wildfly/bin/standalone.conf\` = 0 ];then
    echo "Setting JAVA_OPTS"  >> \$LOG
-   echo "JAVA_OPTS=\"\$JAVA_OPTS -Djava.net.preferIPv4Stack=true -Dwlas.application.properties=/etc/wildfly/wlas/\"" >> /opt/wildfly/bin/standalone.conf
+   echo "JAVA_OPTS=\"\$JAVA_OPTS -Djava.net.preferIPv4Stack=true -Dapp.application.properties=/etc/wildfly/app/\"" >> /opt/wildfly/bin/standalone.conf
 fi
 
 # set /etc/hosts file after install
 MYIP="\`ip addr show dev eth0 |grep inet\  | tr -d \  |sed -e 's/[a-z]//g'|cut -d/ -f1\`"
 MYID="\` echo ip-\$MYIP | sed -e 's/\./-/g'\`"
-MYHOSTLINE=\`echo -e \$MYIP "\t" \$MYID "\t" "wlas localhost\n"\`
+MYHOSTLINE=\`echo -e \$MYIP "\t" \$MYID "\t" "app localhost\n"\`
 
 export MYID
 
@@ -100,7 +100,7 @@ cat > scripts/check-status.sh <<EOF
 
 
 LOG=/var/tmp/scripts.log
-# validate deployment hash for wildfly ( WLAS  / ROOT.war )
+# validate deployment hash for wildfly ( app  / ROOT.war )
 deployed_root=\`grep Deploying /var/tmp/scripts.log |grep -v force |tail -1 | awk '{ print \$4 }'\`
 active_config=/opt/wildfly/standalone/configuration/standalone.xml
 war_hash=\`sha1sum /\${deployed_root} | awk '{ print \$1 }'\`
@@ -154,3 +154,4 @@ hooks:
       timeout: 300
       runas: root
 EOF
+
